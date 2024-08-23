@@ -9,8 +9,15 @@ import {
   toFileUrl,
 } from "./deps.ts";
 
+type EsbuildOptions = {
+  noBundle: boolean;
+};
+
 export async function bundleByEsbuild(
   path: string,
+  {
+    noBundle,
+  }: EsbuildOptions
 ): Promise<string> {
   const importMapFile = getImportMap();
   let importMapURL: URL | undefined;
@@ -58,7 +65,7 @@ export async function bundleByEsbuild(
         importMapURL: importMapURL?.href,
       }),
     ],
-    bundle: true,
+    bundle: !noBundle,
     write: false,
     jsx,
     jsxFactory,

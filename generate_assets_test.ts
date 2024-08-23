@@ -57,6 +57,7 @@ Deno.test("extractReferencedAssets - references to http(s):// schemes are treate
 Deno.test("generateAssets", async () => {
   const [gen] = await generateAssets("examples/with-imports/index.html", {
     publicUrl: ".",
+    noBundle: false,
   });
   const assets = [];
   for await (const asset of gen) {
@@ -81,6 +82,7 @@ Deno.test("generateAssets", async () => {
 Deno.test("generateAssets - publicUrl=/", async () => {
   const [gen] = await generateAssets("examples/with-imports/index.html", {
     publicUrl: "/",
+    noBundle: false,
   });
   const assets = [];
   for await (const asset of gen) {

@@ -51,6 +51,7 @@ Options:
   -i, --import-map <file>         The path to an import map file.
   -c, --config <file>             The path to a tsconfig file.
   -o, --open                      Automatically opens in specified browser.
+  --no-bundle                     Do not bundle any files.
   TODO --https                    Serves files over HTTPS.
   TODO --cert <path>              The path to certificate to use with HTTPS.
   TODO --key <path>               The path to private key to use with HTTPS.
@@ -72,6 +73,7 @@ Options:
   --public-url <prefix>           The path prefix for urls. Default is ".".
   -i, --import-map <file>         The path to an import map file.
   -c, --config <file>             The path to a tsconfig file.
+  --no-bundle                     Do not bundle any files.
   -L, --log-level <level>         Set the log level (choices: "none", "error", "warn", "info", "verbose")
   -h, --help                      Display help for command
 `.trim());
@@ -91,6 +93,7 @@ type CliArgs = {
   "static-dist-prefix": string;
   "import-map": string;
   "config": string;
+  "no-bundle": boolean;
 };
 
 /**
@@ -111,6 +114,7 @@ export async function main(cliArgs: string[] = Deno.args): Promise<number> {
     "livereload-port": livereloadPort = 35729,
     "import-map": importMap,
     "config": config,
+    "no-bundle": noBundle,
   } = parseArgs(cliArgs, {
     string: [
       "log-level",
@@ -121,7 +125,7 @@ export async function main(cliArgs: string[] = Deno.args): Promise<number> {
       "import-map",
       "config",
     ],
-    boolean: ["help", "version", "open"],
+    boolean: ["help", "version", "open", "no-bundle"],
     alias: {
       h: "help",
       v: "version",
@@ -199,6 +203,7 @@ export async function main(cliArgs: string[] = Deno.args): Promise<number> {
       staticDistPrefix,
       importMap,
       config,
+      noBundle,
     });
     return 0;
   }
@@ -227,6 +232,7 @@ export async function main(cliArgs: string[] = Deno.args): Promise<number> {
     staticDistPrefix,
     importMap,
     config,
+    noBundle,
   });
   return 0;
 }
@@ -237,6 +243,7 @@ type BuildAndServeCommonOptions = {
   publicUrl: string;
   importMap: string;
   config: string;
+  noBundle: boolean;
 };
 
 type BuildOptions = {
@@ -255,6 +262,7 @@ async function build(
     staticDistPrefix,
     importMap,
     config,
+    noBundle,
   }: BuildOptions & BuildAndServeCommonOptions,
 ) {
   checkUniqueEntrypoints(paths);
@@ -269,7 +277,7 @@ async function build(
   });
   const allAssets: AsyncGenerator<File, void, void>[] = [];
   for (const path of paths) {
-    const [assets] = await generateAssets(path, { publicUrl });
+    const [assets] = await generateAssets(path, { publicUrl, noBundle });
     allAssets.push(assets);
   }
 
@@ -304,6 +312,7 @@ async function serve(
     staticDistPrefix,
     importMap,
     config,
+    noBundle,
   }: ServeOptions & BuildAndServeCommonOptions,
 ) {
   checkUniqueEntrypoints(paths);
@@ -328,6 +337,7 @@ async function serve(
       onBuild,
       mainAs404: index === 0,
       publicUrl,
+      noBundle,
     });
     allAssets.push(assets);
   }

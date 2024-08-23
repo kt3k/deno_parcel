@@ -43,6 +43,7 @@ type GenerateAssetsOptions = {
   livereloadPort?: number;
   mainAs404?: boolean;
   publicUrl: string;
+  noBundle: boolean;
 };
 
 /**
@@ -59,6 +60,7 @@ export async function generateAssets(
   const htmlAsset = await HtmlAsset.create(path);
   const { pageName, base } = htmlAsset;
   const pathPrefix = opts.publicUrl || ".";
+  const noBundle = opts.noBundle;
 
   const assets = [...htmlAsset.extractReferencedAssets()];
 
@@ -71,7 +73,7 @@ export async function generateAssets(
   const generator = (async function* () {
     for (const a of assets) {
       // TODO(kt3k): These can be concurrent
-      const files = await a.createFileObject({ pageName, base, pathPrefix });
+      const files = await a.createFileObject({ pageName, base, pathPrefix, noBundle });
       for (const file of files) yield file;
     }
 
@@ -80,11 +82,12 @@ export async function generateAssets(
       pageName,
       base,
       pathPrefix,
+      noBundle,
     });
     for (const file of files) yield file;
     if (opts.mainAs404) {
       const file =
-        (await htmlAsset.createFileObject({ pageName, base, pathPrefix }))[0];
+        (await htmlAsset.createFileObject({ pageName, base, pathPrefix, noBundle }))[0];
 
       yield new File([await file.arrayBuffer()], "404", {
         lastModified: 0,
@@ -141,6 +144,7 @@ type CreateFileObjectParams = {
   pageName: string;
   base: string;
   pathPrefix: string;
+  noBundle: boolean;
 };
 
 type Asset = {
@@ -306,9 +310,10 @@ class ScriptAsset implements Asset {
     pageName,
     base,
     pathPrefix,
+    noBundle,
   }: CreateFileObjectParams): Promise<File[]> {
     const path = join(base, this.#src);
-    const data = await bundleByEsbuild(path);
+    const data = await bundleByEsbuild(path, { noBundle });
     this.#dest = `${pageName}.${md5(data)}.js`;
     this.#el.setAttribute("src", posixPathJoin(pathPrefix, this.#dest));
     return [
