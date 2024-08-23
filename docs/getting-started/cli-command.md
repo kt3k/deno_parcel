@@ -31,7 +31,10 @@ Options:
   -s, --static-dir <dir>          The directory for static files. The files here are served as is.
   --static-dist-prefix <prefix>   The prefix for static files in the destination.
   --public-url <prefix>           The path prefix for urls. Default is ".".
+  -i, --import-map <file>         The path to an import map file.
+  -c, --config <file>             The path to a tsconfig file.
   -o, --open                      Automatically opens in specified browser.
+  --no-bundle                     Do not bundle any files.
   --log-level <level>             Sets the log level. "error", "warn", "info", "debug" or "trace". Default is "info".
   -h, --help                      Displays help for command.
 ```
@@ -65,6 +68,9 @@ Options:
   -s, --static-dir <dir>          The directory for static files. The files here are copied to dist as is.
   --static-dist-prefix <prefix>   The prefix for static files in the destination.
   --public-url <prefix>           The path prefix for urls. Default is ".".
+  -i, --import-map <file>         The path to an import map file.
+  -c, --config <file>             The path to a tsconfig file.
+  --no-bundle                     Do not bundle any files.
   -L, --log-level <level>         Set the log level (choices: "none", "error", "warn", "info", "verbose")
   -h, --help                      Display help for command
 ```
