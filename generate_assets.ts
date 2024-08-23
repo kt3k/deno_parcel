@@ -73,7 +73,12 @@ export async function generateAssets(
   const generator = (async function* () {
     for (const a of assets) {
       // TODO(kt3k): These can be concurrent
-      const files = await a.createFileObject({ pageName, base, pathPrefix, noBundle });
+      const files = await a.createFileObject({
+        pageName,
+        base,
+        pathPrefix,
+        noBundle,
+      });
       for (const file of files) yield file;
     }
 
@@ -86,8 +91,12 @@ export async function generateAssets(
     });
     for (const file of files) yield file;
     if (opts.mainAs404) {
-      const file =
-        (await htmlAsset.createFileObject({ pageName, base, pathPrefix, noBundle }))[0];
+      const file = (await htmlAsset.createFileObject({
+        pageName,
+        base,
+        pathPrefix,
+        noBundle,
+      }))[0];
 
       yield new File([await file.arrayBuffer()], "404", {
         lastModified: 0,

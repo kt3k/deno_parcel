@@ -17,7 +17,7 @@ export async function bundleByEsbuild(
   path: string,
   {
     noBundle,
-  }: EsbuildOptions
+  }: EsbuildOptions,
 ): Promise<string> {
   const importMapFile = getImportMap();
   let importMapURL: URL | undefined;
