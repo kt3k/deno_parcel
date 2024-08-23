@@ -10,7 +10,7 @@ Deno.test("bundleByEsbuild - bundles the script by esbuild", async () => {
 Deno.test("bundleByEsbuild - builds without bundling the script by esbuild", async () => {
   const bundle = await bundleByEsbuild("testdata/foo.js", { noBundle: true });
 
-  assert(!bundle.includes(`console.log("hi");`) && bundle.includes('bar.js'));
+  assert(!bundle.includes(`console.log("hi");`) && bundle.includes("bar.js"));
 });
 
 Deno.test(
